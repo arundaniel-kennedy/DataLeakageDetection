@@ -1,0 +1,15 @@
+{%extends "base.html"%}
+
+
+{% block content %}
+<div class="jumbotron">
+  <h2>Website search results:<br></h2><hr>
+  {% for x in result%}
+
+  {{x}}<br>
+
+  {%endfor%}
+  <br><br>
+<a href="/admin" class="btn btn-outline-dark">admin</a>
+</div>
+{% endblock %}

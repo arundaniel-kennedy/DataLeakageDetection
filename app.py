@@ -5,56 +5,19 @@ import mysql.connector
 import os
 import tempfile
 import subprocess
+from search import *
+import bcrypt
 
 config = {
   'user': 'root',
   'password': 'root',
   'host': 'localhost',
-  'database': 'movie',
+  'database': 'dld',
   'raise_on_warnings': True,
 }
 
-def html(urls):
-    ret=''
-    for url in urls:
-        resp=requests.get(url)
-
-        if resp.status_code==200:
-            soup=BeautifulSoup(resp.text,'html.parser')
-            text = soup.find_all(text=True)
-            output = ''
-            blacklist = [
-            	'[document]',
-            	'header',
-            	'html',
-            	'meta',
-            	'head',
-            	'script',
-                'style',
-                'br',
-            	# there may be more elements you don't want, such as "style", etc.
-            ]
-            output = [t.strip("\n") for t in text if t.parent.name not in blacklist ]
-
-            if "ad@we.com" in output:
-                ret += url+":true <br>" #render_template("index.html")
-            else:
-                ret += url+":false <br>"
-    return ret
-
-def ocr(path):
-    temp = tempfile.NamedTemporaryFile(delete=False)
-
-    process = subprocess.Popen(['tesseract', path, temp.name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    process.communicate()
-
-    with open(temp.name + '.txt', 'r') as handle:
-        contents = handle.read()
-
-    os.remove(temp.name + '.txt')
-    os.remove(temp.name)
-
-    return contents
+link = mysql.connector.connect(**config)
+mycursor = link.cursor(buffered=True)
 
 app = Flask(__name__)
 
@@ -62,13 +25,40 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
-@app.route('/scrap',methods=['POST'])
+@app.route('/login',methods=['POST'])
+def login():
+    email = request.form['email']
+    password = request.form['password']
+
+    mycursor.execute("SELECT * FROM login where email='"+email+"'")
+    myresult = mycursor.fetchone()
+    if(len(myresult)>0):
+        if bcrypt.checkpw(password.encode('utf-8') , myresult[2].encode('utf-8')):
+            return render_template("admin/index.html")
+        else:
+            return render_template("/index.html")
+    else:
+        return render_template("/index.html")
+
+@app.route('/admin')
+def adminindex():
+    return render_template("admin/index.html")
+
+@app.route('/admin/transform')
+def transform():
+    return render_template("admin/transform.html")
+
+@app.route('/admin/search')
+def search():
+    return render_template("admin/search.html")
+
+@app.route('/admin/scrap',methods=['POST'])
 def scrap():
     urls = request.form['sites']
-    urls = urls.strip().split();
-    reti = ''
-    reti += html(urls)
-    return reti
+    urls = urls.strip().split()
+    data = request.form['data']
+    reti = html(urls,data)
+    return render_template("admin/result.html",result=reti)
 
 if __name__ == "__main__":
     app.run(host='192.168.1.4', port=40974, debug=True)

@@ -3,15 +3,20 @@
 {% block content %}
 
 <div class="jumbotron">
-  <h1>Data finder</h1>
+  <h1>Login</h1>
   <hr>
-  <form action="/scrap" method="post">
+  <form action="/login" method="post">
     <div class="form-group">
-      <label>Enter sites to search:</label>
-      <textarea name="sites" rows="3" class="form-control"></textarea>
+      <label>Email:</label>
+      <input type="email" class="form-control" name="email" required>
     </div>
-    <input type="submit" name="" value="search" class="btn btn-primary">
+    <div class="form-group">
+      <label>Password:</label>
+      <input type="password" class="form-control" name="password" required>
+    </div>
+    <input type="submit" name="" value="Login" class="btn btn-primary">
   </form>
 </div>
 
+<a href="/admin" class="btn btn-dark">Admin</a><br>
 {% endblock %}

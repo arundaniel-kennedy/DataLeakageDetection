@@ -1,0 +1,22 @@
+{%extends "base.html"%}
+
+{% block content %}
+
+<div class="jumbotron">
+  <h1>Data finder</h1>
+  <hr>
+  <form action="/admin/scrap" method="post">
+    <div class="form-group">
+      <label>Enter sites to search:</label>
+      <textarea name="sites" rows="3" class="form-control"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Enter data to search:</label>
+      <textarea name="data" rows="3" class="form-control"></textarea>
+    </div>
+    <input type="submit" name="" value="search" class="btn btn-primary">
+  </form><br><br>
+  <a href="/admin" class="btn btn-outline-dark">admin</a>
+</div>
+
+{% endblock %}
