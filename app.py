@@ -52,6 +52,14 @@ def transform():
 def search():
     return render_template("admin/search.html")
 
+@app.route('/admin/agent')
+def agent():
+    return render_template("admin/agent.html")
+
+@app.route('/admin/addagent')
+def addagent():
+    return render_template("admin/addagent.html")
+
 @app.route('/admin/scrap',methods=['POST'])
 def scrap():
     urls = request.form['sites']
