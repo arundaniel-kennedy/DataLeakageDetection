@@ -44,21 +44,37 @@ def login():
 def adminindex():
     return render_template("admin/index.html")
 
-@app.route('/admin/transform')
-def transform():
-    return render_template("admin/transform.html")
-
 @app.route('/admin/search')
 def search():
     return render_template("admin/search.html")
 
 @app.route('/admin/agent')
 def agent():
-    return render_template("admin/agent.html")
+
+    mycursor.execute("select * from agent")
+    myresult = mycursor.fetchall()
+
+    return render_template("admin/agent.html", res = myresult)
 
 @app.route('/admin/addagent')
 def addagent():
     return render_template("admin/addagent.html")
+
+@app.route('/admin/saveagent',methods=['POST'])
+def saveagent():
+    name = request.form['name']
+    email = request.form['email']
+    password = request.form['password']
+
+    mycursor.execute("INSERT INTO `login` (`email`, `password`) VALUES ('"+email+"', '"+password+"')")
+    link.commit()
+
+    id = str(mycursor.lastrowid)
+
+    mycursor.execute("INSERT INTO `agent` (`id`, `name`) VALUES ('"+id+"', '"+name+"')")
+    link.commit()
+
+    return redirect(url_for("agent"))
 
 @app.route('/admin/scrap',methods=['POST'])
 def scrap():
@@ -68,5 +84,6 @@ def scrap():
     reti = html(urls,data)
     return render_template("admin/result.html",result=reti)
 
+
 if __name__ == "__main__":
-    app.run(host='192.168.1.4', port=40974, debug=True)
+    app.run(debug=True)

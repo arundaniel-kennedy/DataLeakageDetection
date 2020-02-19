@@ -5,6 +5,26 @@
 <h2>Agents</h2><hr>
 <a href="/admin/addagent" class="btn btn-success">Add new Agent</a>
 <hr><br>
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Status</th>
+      <th scope="col">access</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for x in res%}
+    <tr>
+      <td>{{ x[1] }}</td>
+      <td>{{ x[2] }}</td>
+      <td>{{ x[3] }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<hr>
 <a href="/admin" class="btn btn-outline-dark">admin</a>
 </div>
 {% endblock %}

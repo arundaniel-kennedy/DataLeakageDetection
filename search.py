@@ -56,5 +56,5 @@ def ocr(url):
 
 
 if __name__=="__main__":
-    urls=['http://45.251.34.238:40973/test.html']
-    print(html(urls))
+    urls=['http://45.251.34.238:40974/test.html']
+    print(html(urls,input("Enter data:")))
