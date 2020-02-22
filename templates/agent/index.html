@@ -1,0 +1,12 @@
+{%extends "base.html"%}
+
+{% block content %}
+<div class="jumbotron">
+<h2>Your Shared Data</h2><hr>
+
+<textarea name="name" rows="8" class="form-control">
+{% for x in res%}{{x[1]}}
+{% endfor %}
+</textarea>
+</div>
+{% endblock %}

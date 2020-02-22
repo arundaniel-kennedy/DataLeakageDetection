@@ -4,27 +4,39 @@
 <div class="jumbotron">
 <h2>Agents</h2><hr>
 <a href="/admin/addagent" class="btn btn-success">Add new Agent</a>
+<a href="/admin" class="btn btn-outline-dark">admin</a>
 <hr><br>
 <table class="table">
   <thead class="thead-dark">
     <tr>
       <th scope="col">Name</th>
+      <th scope="col">Block Shared</th>
+      <th scope="col">Edit Access</th>
       <th scope="col">Status</th>
-      <th scope="col">access</th>
     </tr>
   </thead>
   <tbody>
     {% for x in res%}
     <tr>
-      <td>{{ x[1] }}</td>
-      <td>{{ x[2] }}</td>
+      <td scope="row">{{ x[1] }}</td>
       <td>{{ x[3] }}</td>
+      <td>
+        <form action="/admin/editaccess" method="post">
+          <input type="text" name="id" value="{{ x[0] }}" hidden>
+          <button type="submit" name="button" class="btn btn-warning">Edit</button>
+        </form>
+      </td>
+      <td>
+        <form action="/admin/blockagent" method="post">
+          <input type="text" name="id" value="{{ x[0] }}" hidden>
+          <button type="submit" name="button" class="btn btn-danger">{{ x[2] }}</button>
+        </form>
+      </td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 
 <hr>
-<a href="/admin" class="btn btn-outline-dark">admin</a>
 </div>
 {% endblock %}

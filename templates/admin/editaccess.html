@@ -1,0 +1,60 @@
+{%extends "base.html"%}
+
+{% block content %}
+<div class="jumbotron">
+<h2>Agent data</h2><hr>
+<a href="/admin/agent" class="btn btn-dark">Go Back</a>
+<a href="/admin" class="btn btn-outline-dark">admin</a>
+<hr><br>
+<h3>Existing Data</h3>
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">id</th>
+      <th scope="col">value</th>
+      <th scope="col">block</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for x in data%}
+    <tr>
+      <td>{{ x[0] }}</td>
+      <td>{{ x[1] }}</td>
+      <td>{{ x[2] }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  </table>
+
+<hr>
+<form action="/admin/addaccess" method="post" style="width:20vw;">
+  <div class="form-group">
+    <input type="text" name="id" value="{{id}}" hidden>
+    <label>Enter Range of Datas to share:</label>
+    <input type="text" name="dats" class="form-control" pattern="[0-9]+-[0-9]+$" title="[0-9]-[0-9]" required>
+  </div>
+  <input type="submit" name="" value="Add Data" class="btn btn-success">
+</form>
+<h3>Available data</h3>
+<table class="table  table-hover">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">id</th>
+      <th scope="col">value</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for x in res%}
+    <tr>
+      <td>{{ x[0] }}</td>
+      <td>{{ x[1] }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  </table>
+  <hr />
+<hr>
+</div>
+
+
+{% endblock %}
