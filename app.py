@@ -60,9 +60,29 @@ def search():
 def scrap():
     urls = request.form['sites']
     urls = urls.strip().split()
-    data = request.form['data']
+
+    mycursor.execute("select value from data")
+    data = mycursor.fetchall()
+
     reti = html(urls,data)
-    return render_template("admin/result.html",result=reti)
+
+    guag = []
+    for j in reti:
+        mycursor.execute("select agent from data where value='"+j+"'")
+        ga = mycursor.fetchone()
+        guag.append(ga[0])
+
+    res = []
+    for d in guag:
+        d = d.split(",")
+        c =[]
+        for f in d:
+            mycursor.execute("select name from agent where id='"+f+"'")
+            ba = mycursor.fetchone()
+            c.append(ba[0])
+        res.append(c)
+
+    return render_template("admin/result.html",result=res)
 
 @app.route('/admin/agent')
 def agent():
@@ -105,20 +125,17 @@ def blockagent():
 def editaccess():
     id = request.form['id']
 
-    mycursor.execute("select access from agent where id='"+id+"'")
-    access = mycursor.fetchone()
+    mycursor.execute("select * from data")
+    myresult = mycursor.fetchall()
 
     data = []
-    if(access[0]=="null"):
-        data=[]
-    else:
-        acci = access[0].split(",")
-        for f in acci:
-            mycursor.execute("select * from data where block='"+f+"'")
-            data = data + mycursor.fetchall()
-
-    mycursor.execute("select * from data where block is NULL")
-    myresult = mycursor.fetchall()
+    for x in myresult:
+        if(x[2]=="null" or x[2]==None):
+            fff = ''
+        else:
+            sd = x[2].split(",")
+            if id in sd:
+                data.append(x)
 
     return render_template("admin/editaccess.html",data = data,res = myresult,id=id)
 
@@ -132,28 +149,17 @@ def addaccess():
     for i in range(data[0],data[1]+1):
         datas.append(i)
 
-    mycursor.execute("select val from indexing where id=1")
-    valu = mycursor.fetchone()
-
-    valu = valu[0]+1
-
-    mycursor.execute("update indexing set val='"+str(valu)+"' where id='1'")
-    link.commit()
-
-    for j in datas:
-        mycursor.execute("update data set block='d"+str(valu)+"' where id='"+str(j)+"'")
+    for data in datas:
+        mycursor.execute("select agent from data where id='"+str(data)+"'")
+        myresult = mycursor.fetchone()
+        if(myresult[0]=="null" or myresult[0]==None):
+            age = str(id)
+        else:
+            age = myresult[0]+","+str(id)
+        #print(age)
+        mycursor.execute("update data set agent='"+age+"' where id='"+str(data)+"'")
         link.commit()
 
-    mycursor.execute("select access from agent where id='"+id+"'")
-    access = mycursor.fetchone()
-
-    if(access[0]!="null"):
-        acc = access[0]+",d"+str(valu)
-    else:
-        acc = "d"+str(valu)
-
-    mycursor.execute("update agent set access='"+acc+"' where id='"+str(id)+"'")
-    link.commit()
 
     return redirect(url_for("agent"))
 
@@ -184,17 +190,19 @@ def savedata():
 def agents():
     id = session['id']
 
-    mycursor.execute("select access from agent where id='"+str(id)+"'")
-    access = mycursor.fetchone()
+    id = request.form['id']
+
+    mycursor.execute("select * from data")
+    myresult = mycursor.fetchall()
 
     data = []
-    if(access[0]=="null"):
-        data=[]
-    else:
-        acci = access[0].split(",")
-        for f in acci:
-            mycursor.execute("select * from data where block='"+f+"'")
-            data = data + mycursor.fetchall()
+    for x in myresult:
+        if(x[2]=="null" or x[2]==None):
+            fff = ''
+        else:
+            sd = x[2].split(",")
+            if id in sd:
+                data.append(x)
 
     return render_template("agent/index.html",res = data)
 

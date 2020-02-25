@@ -42,11 +42,13 @@ def html(urls,data):
 
             while("" in output) :
                 output.remove("")
-
-            if data in output:
-                ret.append(url+":true") #render_template("index.html")
-            else:
-                ret.append(url+":false")
+            #print(output)
+            #print(data)
+            for s in data:
+                #print(s[0])
+                if s[0] in output:
+                    ##print(s[0])
+                    ret.append(s[0]) #render_template("index.html")
     return ret
 
 def ocr(url):
@@ -56,5 +58,6 @@ def ocr(url):
 
 
 if __name__=="__main__":
-    urls=['http://45.251.34.238:40974/test.html']
-    print(html(urls,input("Enter data:")))
+    urls = ['http://45.251.34.238:40973/test.html']
+    data = ['ad@weunitx.com']
+    print(html(urls,data))
