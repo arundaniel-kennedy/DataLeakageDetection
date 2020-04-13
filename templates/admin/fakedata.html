@@ -1,0 +1,34 @@
+{%extends "base.html"%}
+
+{% block content %}
+<div class="jumbotron">
+<h2> Fake Data</h2><hr>
+<form action="/admin/addfakedata" method="post" class="d-inline-flex">
+  <input type="text" class="form-control mr-2" name="num" value="1">
+  <input type="submit" class="btn btn-success" value="Add new Data">
+</form>
+<a href="/admin" class="btn btn-outline-dark">admin</a>
+<hr><br>
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">value</th>
+      <th scope="col">Block</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for x in res%}
+    <tr>
+      <td scope="row">{{ x[0] }}</td>
+      <td>{{ x[1] }}</td>
+      <td>{{ x[2] }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<hr>
+<a href="/admin" class="btn btn-outline-dark">admin</a>
+</div>
+{% endblock %}

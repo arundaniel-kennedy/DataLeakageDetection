@@ -2,8 +2,45 @@
 
 {% block content %}
 <div class="jumbotron">
-  <a href="/admin/search" class="btn btn-outline-dark">Search</a>
-  <a href="/admin/data" class="btn btn-outline-dark">Data</a>
-  <a href="/admin/agent" class="btn btn-outline-dark">Agents</a>
+
+  <div class="row">
+
+    <div class="col-4 mb-5">
+      <div class="card" style="width: 18rem;background-color:gray;">
+        <div class="card-body">
+          <h5 class="card-title text-light">Search</h5>
+          <a href="/admin/search" class="btn btn-outline-dark" class="card-link">link</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-4 mb-5">
+      <div class="card" style="width: 18rem;background-color:gray;">
+        <div class="card-body">
+          <h5 class="card-title text-light">Data</h5>
+          <a href="/admin/data" class="btn btn-outline-dark" class="card-link">link</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-4 mb-5">
+      <div class="card" style="width: 18rem;background-color:gray;">
+        <div class="card-body">
+          <h5 class="card-title  text-light">Fake data</h5>
+          <a href="/admin/fakedata" class="btn btn-outline-dark" class="card-link">link</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-4 mb-5">
+      <div class="card" style="width: 18rem;background-color:gray;">
+        <div class="card-body">
+          <h5 class="card-title  text-light">Agents</h5>
+          <a href="/admin/agent" class="btn btn-outline-dark" class="card-link">link</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 {% endblock %}

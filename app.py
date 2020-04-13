@@ -8,6 +8,8 @@ import tempfile
 import subprocess
 from search import *
 import bcrypt
+from faker import Faker
+fake = Faker()
 
 config = {
   'user': 'root',
@@ -37,7 +39,7 @@ def login():
     mycursor.execute("SELECT * FROM login where email='"+email+"'")
     myresult = mycursor.fetchone()
     if(len(myresult)>0):
-        if bcrypt.checkpw(password.encode('utf-8') , myresult[2].encode('utf-8')):
+        if(password == myresult[2]):
             if(myresult[3]==1):
                 return render_template("admin/index.html")
             else:
@@ -63,7 +65,7 @@ def scrap():
 
     mycursor.execute("select value from data")
     data = mycursor.fetchall()
-
+    #print(set(data)
     reti = html(urls,data)
 
     guag = []
@@ -170,6 +172,25 @@ def data():
 
     return render_template("admin/data.html",res = myresult)
 
+@app.route('/admin/fakedata')
+def fakedata():
+    mycursor.execute("select * from fake")
+    myresult = mycursor.fetchall()
+
+    return render_template("admin/fakedata.html",res = myresult)
+
+@app.route('/admin/addfakedata',methods=['POST'])
+def addfakedata():
+    num = int(request.form["num"])
+
+    for i in range(0,num):
+        elem = fake.email()+":"+fake.password()
+        mycursor.execute("INSERT INTO `fake` (`value`) VALUES ('"+elem+"')")
+        link.commit()
+
+    return redirect(url_for("fakedata"))
+
+
 @app.route('/admin/adddata')
 def adddata():
     return render_template("admin/adddata.html")
@@ -189,8 +210,7 @@ def savedata():
 @app.route('/agent')
 def agents():
     id = session['id']
-
-    id = request.form['id']
+    #print(id)
 
     mycursor.execute("select * from data")
     myresult = mycursor.fetchall()
@@ -201,10 +221,11 @@ def agents():
             fff = ''
         else:
             sd = x[2].split(",")
-            if id in sd:
+            #print(sd)
+            if str(id) in sd:
                 data.append(x)
 
     return render_template("agent/index.html",res = data)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='192.168.1.4', port=49550,debug=True)
