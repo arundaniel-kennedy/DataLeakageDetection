@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Feb 22, 2020 at 05:07 PM
+-- Generation Time: Jun 07, 2020 at 10:21 PM
 -- Server version: 5.7.26
 -- PHP Version: 7.4.1
 
@@ -31,17 +31,17 @@ USE `dld`;
 CREATE TABLE `agent` (
   `id` int(255) NOT NULL,
   `name` varchar(1000) NOT NULL,
-  `status` varchar(300) NOT NULL DEFAULT 'Unblocked',
-  `access` varchar(1000) DEFAULT NULL
+  `status` varchar(300) NOT NULL DEFAULT 'Unblocked'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `agent`
 --
 
-INSERT INTO `agent` (`id`, `name`, `status`, `access`) VALUES
-(4, 'zeee', 'Unblocked', 'd1,d3,d5'),
-(5, 'deee', 'Unblocked', 'd2,d4');
+INSERT INTO `agent` (`id`, `name`, `status`) VALUES
+(4, 'zeee', 'Blocked'),
+(5, 'deee', 'Unblocked'),
+(6, 'rrrr', 'Unblocked');
 
 -- --------------------------------------------------------
 
@@ -52,28 +52,28 @@ INSERT INTO `agent` (`id`, `name`, `status`, `access`) VALUES
 CREATE TABLE `data` (
   `id` int(255) NOT NULL,
   `value` text NOT NULL,
-  `block` varchar(1000) DEFAULT NULL
+  `agent` varchar(1000) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `data`
 --
 
-INSERT INTO `data` (`id`, `value`, `block`) VALUES
-(1, 'ajaxx66@hotmail.com:jamine5543', 'd1'),
-(2, '29isprime@gmail.com:viper1970', 'd1'),
-(3, 'abel_jess@yahoo.com:flight69', 'd3'),
-(4, 'andiball007@gmail.com:Liverp00l', 'd2'),
-(5, 'ben_coulter@live.com.au:Computer9', 'd2'),
-(6, 'benongth@gmail.com:ben24380', 'd2'),
-(7, 'valencia.andrea2015@gmail.com:mississippi', 'd4'),
-(8, 'anastasiaousaklidis@yahoo.com:JohnLennon40', 'd4'),
-(9, 'zandria_hicks@yahoo.com:Konnic12ha', 'd4'),
-(10, 'graceczhu@gmail.com:Mercury0304', 'd4'),
-(11, 'garyhuff011@gmail.com:hoosiers', 'd5'),
-(12, 'alpha-d@hotmail.com:JagerBomber21', 'd5'),
-(13, 'paul.fallon@email.saintleo.edu:wcbk07', 'd5'),
-(14, 'hrkbustamante@gmail.com:Bustamante20!', 'd5'),
+INSERT INTO `data` (`id`, `value`, `agent`) VALUES
+(1, 'ajaxx66@hotmail.com:jamine5543', '4,6'),
+(2, '29isprime@gmail.com:viper1970', '4,5,6'),
+(3, 'abel_jess@yahoo.com:flight69', '4,5,6'),
+(4, 'andiball007@gmail.com:Liverp00l', '5,6'),
+(5, 'ben_coulter@live.com.au:Computer9', '6'),
+(6, 'benongth@gmail.com:ben24380', '6'),
+(7, 'valencia.andrea2015@gmail.com:mississippi', '6'),
+(8, 'anastasiaousaklidis@yahoo.com:JohnLennon40', '6'),
+(9, 'zandria_hicks@yahoo.com:Konnic12ha', '6'),
+(10, 'graceczhu@gmail.com:Mercury0304', '6'),
+(11, 'garyhuff011@gmail.com:hoosiers', NULL),
+(12, 'alpha-d@hotmail.com:JagerBomber21', NULL),
+(13, 'paul.fallon@email.saintleo.edu:wcbk07', NULL),
+(14, 'hrkbustamante@gmail.com:Bustamante20!', NULL),
 (15, 'ynakk203@gmail.com:44Whittaker', NULL),
 (16, 'ronak.choudhary@gmail.com:5Iodine3', NULL),
 (17, 'bufnton@gmail.com:Tony1997', NULL),
@@ -288,6 +288,39 @@ INSERT INTO `data` (`id`, `value`, `block`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `fake`
+--
+
+CREATE TABLE `fake` (
+  `id` int(255) NOT NULL,
+  `value` text NOT NULL,
+  `agent` varchar(1000) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `fake`
+--
+
+INSERT INTO `fake` (`id`, `value`, `agent`) VALUES
+(1, 'riverakim@gmail.com:_vB2LS8eq2', NULL),
+(2, 'edward93@jones.com:ulZ_5MuWM#', NULL),
+(3, 'jeremyshepherd@yahoo.com:S)3ZlPV!Hp', NULL),
+(4, 'juan01@garcia-ryan.com:6sgwUTF_!&', NULL),
+(5, 'rebeccacollins@hernandez.com:fQ0g9Ihs&R', NULL),
+(6, 'kenneth98@miller-williams.com:2A7JHbo6$I', NULL),
+(7, 'blackkatie@gonzales.com:5moDcHSa$o', NULL),
+(8, 'thomas39@hotmail.com:_HND_K0@z9', NULL),
+(9, 'brittanyhumphrey@gmail.com:@LR@KB#xv4', NULL),
+(10, 'sjoseph@wood.com:#5E6g)ymo7', NULL),
+(11, 'clarkedrew@mason-wright.org:_2PESKvebz', NULL),
+(12, 'blanchardtamara@yahoo.com:l%7w0xAsrY', NULL),
+(13, 'tanyaford@gmail.com:#0hV!Y_sC8', NULL),
+(14, 'gordontiffany@roberts-cardenas.info:*0K&o0UP&8', NULL),
+(15, 'aroman@shelton-mitchell.com:%7T&0SRx74', NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `indexing`
 --
 
@@ -325,9 +358,10 @@ CREATE TABLE `login` (
 --
 
 INSERT INTO `login` (`slno`, `email`, `password`, `admin`, `token`, `last_access`, `access_duration`) VALUES
-(1, 'ad@weunitx.com', '$2y$12$PYd2LCVVRWbXhaggqot.o.LuULULi3l.NLjMnAcQxsYHMZypcPZ8O', 1, NULL, NULL, NULL),
-(4, 'a@g.com', '$2y$12$aAoZXVNX6WefMvoD3T4bxOvkmNd2F7gShqoZhVvtYLaXm8B1.DnO2', 0, NULL, NULL, NULL),
-(5, 'd@d.com', '$2y$12$/DiaLeZBE2umc3NOm/JGReBQxZVf4sviidJgNyORdJA4w.ybZwqc2', 0, NULL, NULL, NULL);
+(1, 'ad@weunitx.com', 'admin', 1, NULL, NULL, NULL),
+(4, 'a@g.com', 'admin', 0, NULL, NULL, NULL),
+(5, 'd@d.com', 'admin', 0, NULL, NULL, NULL),
+(6, 'a@w.com', 'admin', 0, NULL, NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -343,6 +377,12 @@ ALTER TABLE `agent`
 -- Indexes for table `data`
 --
 ALTER TABLE `data`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `fake`
+--
+ALTER TABLE `fake`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -368,6 +408,12 @@ ALTER TABLE `data`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=225;
 
 --
+-- AUTO_INCREMENT for table `fake`
+--
+ALTER TABLE `fake`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
 -- AUTO_INCREMENT for table `indexing`
 --
 ALTER TABLE `indexing`
@@ -377,7 +423,7 @@ ALTER TABLE `indexing`
 -- AUTO_INCREMENT for table `login`
 --
 ALTER TABLE `login`
-  MODIFY `slno` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `slno` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
