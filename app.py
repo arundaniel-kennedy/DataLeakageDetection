@@ -36,9 +36,9 @@ def login():
     email = request.form['email']
     password = request.form['password']
 
-    mycursor.execute("SELECT * FROM login where email='"+email+"'")
+    mycursor.execute("SELECT * FROM login ")
     myresult = mycursor.fetchone()
-    if(len(myresult)>0):
+    if(myresult!=''):
         if(password == myresult[2]):
             if(myresult[3]==1):
                 return render_template("admin/index.html")
@@ -66,25 +66,47 @@ def scrap():
     mycursor.execute("select value from data")
     data = mycursor.fetchall()
     #print(set(data)
-    reti = html(urls,data)
+    reti = html(urls,data) # getting data that was found
 
-    guag = []
+    vt = [] #agent id (vt)
     for j in reti:
         mycursor.execute("select agent from data where value='"+j+"'")
-        ga = mycursor.fetchone()
-        guag.append(ga[0])
+        vti = mycursor.fetchone()
+        vt.append(vti[0])
 
+    agents = [] #agent name
     res = []
-    for d in guag:
-        d = d.split(",")
-        c =[]
-        for f in d:
-            mycursor.execute("select name from agent where id='"+f+"'")
+    w = 0
+    for ids in vt:
+        ids = ids.split(",")
+        agent =[]
+        for id in ids:
+            mycursor.execute("select name from agent where id='"+id+"'")
             ba = mycursor.fetchone()
-            c.append(ba[0])
-        res.append(c)
+            agent.append(ba[0])
+        res.append((agent,reti[w]))
+        agents.append(agent)
+        w+=1;
 
-    return render_template("admin/result.html",result=res)
+    pg = {}
+    for i in agents:
+      for j in i:
+          pg[j] = []
+
+    for pp in range(0, 11, 1):
+      p = pp/10
+      pr = {}
+      for i in agents:
+          for j in i:
+              pr[j] = 1
+      for agrp in agents:
+          s = len(agrp)
+          for agent in agrp:
+              pr[agent] *= 1-((1-p)/s)
+      for key in pr:
+          val = 1-pr[key]
+          pg[key].append(val)
+    return pg #render_template("admin/result.html",result=res)
 
 @app.route('/admin/agent')
 def agent():
@@ -224,8 +246,7 @@ def agents():
             #print(sd)
             if str(id) in sd:
                 data.append(x)
-
     return render_template("agent/index.html",res = data)
 
 if __name__ == "__main__":
-    app.run(host='192.168.1.4', port=49551,debug=True)
+    app.run(host='192.168.1.4', port=40974,debug=True)
