@@ -1,0 +1,113 @@
+{%extends "base.html"%}
+
+{% block content %}
+<div class="jumbotron" style="background-color:white;border:1px solid black">
+  <h2 class="text-center">Agent assign data</h2><hr>
+  <a href="/admin/agent" class="btn btn-dark">Go Back</a>
+  <hr>
+  <form class="" action="index.html" method="post">
+    <h4>Choose the agents to distribute data to</h4>
+    {% for x in agents %}
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="{{x[0]}}" id="checkbox{{x[0]}}">
+        <label class="form-check-label" for="checkbox{{x[0]}}">{{ x[1] }}</label>
+      </div>
+    {% endfor %}
+    <hr>
+    <h4>Choose the type of data distribution</h4>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="allocation" id="exampleRadios1" value="explicit" onchange="algoshow()">
+        <label class="form-check-label" for="exampleRadios1">
+          Explicit
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="allocation" id="exampleRadios2" value="sample" onchange="algoshow()">
+        <label class="form-check-label" for="exampleRadios2">
+          Sample
+        </label>
+      </div>
+      <br>
+    <div class="d-none" id="algos">
+      <h5>Choose algorithm</h5>
+        <div id="edr" class="d-none">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="algorithm" id="exampleRadios3" value="explicit">
+            <label class="form-check-label" for="exampleRadios3">
+              E-Random
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="algorithm" id="exampleRadios4" value="sample">
+            <label class="form-check-label" for="exampleRadios4">
+              E-optimal
+            </label>
+          </div>
+        </div>
+        <div id="sdr" class="d-none">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="algorithm" id="exampleRadios5" value="explicit">
+            <label class="form-check-label" for="exampleRadios5">
+              S-Random
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="algorithm" id="exampleRadios6" value="sample">
+            <label class="form-check-label" for="exampleRadios6">
+              S-Overlap
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="algorithm" id="exampleRadios7" value="sample">
+            <label class="form-check-label" for="exampleRadios7">
+              S-Max
+            </label>
+          </div>
+        </div>
+    </div>
+    <hr>
+    <div class="d-none" id="data">
+      <h4>Enter Data</h4>
+        <div class="d-none" id="exp">
+          <div class="form-group">
+            <label for="">Enter total number of fake objects</label>
+            <input type="text" name="tfo" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="">Enter total fake objects for each agent (separated by comma)</label>
+            <input type="text" name="tfea" class="form-control">
+          </div>
+        </div>
+        <div class="d-none" id="sam">
+          <div class="form-group">
+            <label for="">Enter total objects for each agent (separated by comma)</label>
+            <input type="text" name="toea" class="form-control">
+          </div>
+        </div>
+    </div>
+  </form>
+
+</div>
+
+<script>
+  function algoshow(){
+    document.getElementById('algos').classList.remove("d-none");
+    document.getElementById('data').classList.remove("d-none");
+
+    document.getElementById('edr').classList.add("d-none");
+    document.getElementById('sdr').classList.add("d-none");
+    document.getElementById('exp').classList.add("d-none");
+    document.getElementById('sam').classList.add("d-none");
+
+    if(document.getElementsByName('allocation')[0].checked){
+      document.getElementById('edr').classList.remove("d-none");
+      document.getElementById('exp').classList.remove("d-none");
+    }else{
+      document.getElementById('sdr').classList.remove("d-none");
+      document.getElementById('sam').classList.remove("d-none");
+    }
+  }
+</script>
+
+
+{% endblock %}

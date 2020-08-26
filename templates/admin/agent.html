@@ -1,16 +1,40 @@
 {%extends "base.html"%}
 
 {% block content %}
-<div class="jumbotron">
-<h2>Agents</h2><hr>
-<a href="/admin/addagent" class="btn btn-success">Add new Agent</a>
-<a href="/admin" class="btn btn-outline-dark">admin</a>
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="/admin">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/admin/data">Data</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/admin/fakedata">Fake data </a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/admin/agent">Agents <span class="sr-only">(current)</span></a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="jumbotron mt-5" style="background-color:white;border:1px solid black">
+<h2 class="text-center">Agents</h2><hr>
+<div class="d-flex justify-content-between">
+  <a href="/admin/addagent" class="btn btn-success">Add new Agent</a>
+  <a href="/admin/addaccess" class="btn btn-warning text-nowrap">Add Access</a>
+</div>
 <hr><br>
-<table class="table">
+<table class="table text-center table-hover table-striped">
   <thead class="thead-dark">
     <tr>
       <th scope="col">Name</th>
-      <th scope="col">Edit Access</th>
+      <th scope="col">Records assigned</th>
       <th scope="col">Status</th>
     </tr>
   </thead>
@@ -18,16 +42,11 @@
     {% for x in res%}
     <tr>
       <td scope="row">{{ x[1] }}</td>
-      <td>
-        <form action="/admin/editaccess" method="post">
-          <input type="text" name="id" value="{{ x[0] }}" hidden>
-          <button type="submit" name="button" class="btn btn-warning">Edit</button>
-        </form>
-      </td>
+      <td>{{ x[2] }}</td>
       <td>
         <form action="/admin/blockagent" method="post">
           <input type="text" name="id" value="{{ x[0] }}" hidden>
-          <button type="submit" name="button" class="btn btn-danger">{{ x[2] }}</button>
+          <button type="submit" name="button" class="btn btn-danger">{{ x[3] }}</button>
         </form>
       </td>
     </tr>

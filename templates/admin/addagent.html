@@ -1,22 +1,22 @@
 {%extends "base.html"%}
 
 {% block content %}
-<div class="jumbotron">
+<div class="jumbotron" style="background-color:white;border:1px solid black">
   <a href="/admin/agent" class="btn btn-dark">Go back</a><br><br>
 <h2>Add Agents</h2><hr>
   <div class="container">
     <form class="" action="/admin/saveagent" method="post" autocomplete="off">
       <div class="form-group">
         <label>Name:</label>
-        <input type="text" class="form-control" name="name" value="">
+        <input type="text" class="form-control border border-dark" name="name" value="">
       </div>
       <div class="form-group">
         <label>Email:</label>
-        <input type="email" class="form-control" name="email" value="">
+        <input type="email" class="form-control border border-dark" name="email" value="">
       </div>
       <div class="form-group">
         <label>Password:</label>
-        <input type="password" class="form-control" name="password" value="">
+        <input type="password" class="form-control border border-dark" name="password" value="">
       </div>
       <input type="submit" class="btn btn-success" name="" value="Submit">
     </form>

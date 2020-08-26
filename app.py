@@ -9,6 +9,7 @@ import subprocess
 from search import *
 import bcrypt
 from faker import Faker
+import random as rand
 fake = Faker()
 
 config = {
@@ -145,61 +146,24 @@ def blockagent():
 
     return redirect(url_for("agent"))
 
-@app.route('/admin/editaccess',methods=['POST'])
-def editaccess():
-    id = request.form['id']
-
-    mycursor.execute("select * from data")
-    myresult = mycursor.fetchall()
-
-    data = []
-    for x in myresult:
-        if(x[2]=="null" or x[2]==None):
-            fff = ''
-        else:
-            sd = x[2].split(",")
-            if id in sd:
-                data.append(x)
-
-    return render_template("admin/editaccess.html",data = data,res = myresult,id=id)
-
-@app.route('/admin/addaccess',methods=['POST'])
+@app.route('/admin/addaccess')
 def addaccess():
-    id = request.form["id"]
-    data = request.form['dats'].split("-")
-    data = [int(i) for i in data]
+    mycursor.execute("select * from agent")
+    agents = mycursor.fetchall()
 
-    datas = []
-    for i in range(data[0],data[1]+1):
-        datas.append(i)
-
-    for data in datas:
-        mycursor.execute("select agent from data where id='"+str(data)+"'")
-        myresult = mycursor.fetchone()
-        if(myresult[0]=="null" or myresult[0]==None):
-            age = str(id)
-        else:
-            age = myresult[0]+","+str(id)
-        #print(age)
-        mycursor.execute("update data set agent='"+age+"' where id='"+str(data)+"'")
-        link.commit()
-
-
-    return redirect(url_for("agent"))
-
-@app.route('/admin/data')
-def data():
-    mycursor.execute("select * from data")
-    myresult = mycursor.fetchall()
-
-    return render_template("admin/data.html",res = myresult)
+    return render_template("admin/addaccess.html",agents=agents)
 
 @app.route('/admin/fakedata')
 def fakedata():
     mycursor.execute("select * from fake")
     myresult = mycursor.fetchall()
 
-    return render_template("admin/fakedata.html",res = myresult)
+    total = len(myresult)
+
+    mycursor.execute("select * from fake limit 15")
+    myresult = mycursor.fetchall()
+
+    return render_template("admin/fakedata.html",res = myresult,total = total)
 
 @app.route('/admin/addfakedata',methods=['POST'])
 def addfakedata():
@@ -207,11 +171,23 @@ def addfakedata():
 
     for i in range(0,num):
         elem = fake.email()+":"+fake.password()
-        mycursor.execute("INSERT INTO `fake` (`value`) VALUES ('"+elem+"')")
+        type = rand.choice(['vip','premium'])
+        mycursor.execute("INSERT INTO `fake` (`value`,`type`) VALUES ('"+elem+"','"+type+"')")
         link.commit()
 
     return redirect(url_for("fakedata"))
 
+@app.route('/admin/data')
+def data():
+    mycursor.execute("select * from data")
+    myresult = mycursor.fetchall()
+
+    total = len(myresult)
+
+    mycursor.execute("select * from data limit 15")
+    myresult = mycursor.fetchall()
+
+    return render_template("admin/data.html",res = myresult,total = total)
 
 @app.route('/admin/adddata')
 def adddata():
@@ -224,7 +200,8 @@ def savedata():
     values = values.replace("\r","").split("\n")
 
     for value in values:
-        mycursor.execute("INSERT INTO `data` (`value`) VALUES ('"+value+"')")
+        type = rand.choice(['vip','premium'])
+        mycursor.execute("INSERT INTO `data` (`value`,`type`) VALUES ('"+value+"','"+type+"')")
         link.commit()
 
     return redirect(url_for("data"))

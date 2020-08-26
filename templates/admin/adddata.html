@@ -1,14 +1,15 @@
 {%extends "base.html"%}
 
 {% block content %}
-<div class="jumbotron">
+<div class="jumbotron" style="background-color:white;border:1px solid black">
   <a href="/admin/data" class="btn btn-dark">Go back</a><br><br>
-<h2>Add Data</h2><hr>
+  <h2>Add Data</h2>
+  <hr>
   <div class="container">
     <form class="" action="/admin/savedata" method="post" autocomplete="off">
       <div class="form-group">
-        <label>Values:</label>
-        <textarea name="values" class="form-control" rows="8"></textarea>
+        <label>Values: [Enter each value in a new row]</label>
+        <textarea name="values" class="form-control border border-dark" rows="8"></textarea>
       </div>
       <input type="submit" class="btn btn-success" name="" value="Submit">
     </form>
