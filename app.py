@@ -28,6 +28,41 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+def e_random(R):
+    return rand.choice(R)
+
+def e_optimal(R,r):
+    arg = []
+    for i in R:
+        c = len(r[i])
+        arg.append((1/c)-(1/(c+1)))
+    k = arg.index(max(arg))
+    return R[k]
+
+def explicit(r,fak,b,B,n,choice):
+    R = []
+    F = []
+    for i in  range(0,n):
+        if b[i]>0:
+            R.append(i)
+        F.append([])
+
+    j = 0
+    while B > 0:
+        if choice == 'e-random':
+            i = e_random(R)
+        else:
+            i = e_optimal(R,r)
+        f = fak[j]
+        j = j+1
+        r[i].append(f)
+        F[i].append(f)
+        b[i] = b[i]-1
+        if(b[i]==0):
+            R.remove(i)
+        B = B - 1
+    return F
+
 @app.route('/')
 def index():
     return render_template("index.html")
@@ -152,6 +187,50 @@ def addaccess():
     agents = mycursor.fetchall()
 
     return render_template("admin/addaccess.html",agents=agents)
+
+@app.route('/admin/defaccess',methods=['POST'])
+def defaccess():
+    id = list(set(request.form['id'].split(',')))
+    n = len(list(filter(None, id)))
+    allocation = request.form['allocation']
+    algorithm = request.form['algorithm']
+
+    B = int(request.form['tfo'])
+    bi = request.form['tfea'].split(",")
+    bi = list(filter(None, bi))
+    b = [int(b) for b in bi]
+    cond = request.form['condition'].split(",")
+    mi = request.form['toea'].split(",")
+    mi = list(filter(None, mi))
+    m = [int(m) for m in mi]
+
+    r=[]
+    for i in range(0,n):
+        r.append([])
+
+    for i in range(0,n):
+        mycursor.execute("select id from data where type='"+cond[i]+"'")
+        rest = mycursor.fetchall()
+        for ress in rest:
+             r[i].append(ress[0])
+
+    fak=[]
+    for i in range(0,n):
+        fak.append([])
+
+    for i in range(0,n):
+        mycursor.execute("select id from fake where type='"+cond[i]+"'")
+        rest = mycursor.fetchall()
+        for ress in rest:
+            print(i)
+            fak[i].append(ress[0])
+
+    print(fak)
+
+    # if(allocation == 'explicit'):
+    #     print(explicit(r, fak, b, B, n, algorithm))
+
+    #return redirect(url_for(agent))
 
 @app.route('/admin/fakedata')
 def fakedata():
