@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 import mysql.connector
 import os
+import io
 import tempfile
 import subprocess
 from search import *
@@ -11,6 +12,7 @@ import bcrypt
 from faker import Faker
 import random as rand
 import matplotlib.pyplot as plt
+
 fake = Faker()
 
 config = {
@@ -193,15 +195,32 @@ def scrap():
           val = 1-pr[key]
           pg[key].append(val)
 
+    maxie = 0
+    lagent = ''
+    for val in pg:
+        if maxie < max(pg[val]):
+            maxie = max(pg[val])
+            lagent = val
+
+    plt.switch_backend('Agg')
+
     plots = []
-    # for pl in pg:
-    #     p = [i/10 for i in range(0,11,1)]
-    #     plt.plot(pg[pl],p,label = "i=1")
-    #     plt.xlabel('Pr{Gi}')
-    #     plt.ylabel('p')
-    #     plt.savefig('/static/images/'+pl+'.jpg')
-    #     plot.append('/static/images/'+pl+'.jpg')
-    return render_template("admin/result.html",result=res,plots=plots)
+    p = [i/10 for i in range(0,11,1)]
+    i = 0
+    for pl in pg:
+        print(i,pg[pl])
+        plt.plot(pg[pl],p,label = "i="+str(i))
+        i = i+1
+
+    plt.title("Guilty chart", fontdict=None, loc='center', pad=None)
+    plt.xlabel('p')
+    plt.ylabel('Pr{Gi}')
+    plt.savefig('static/images/new.png')
+    plt.close("all")
+    plots.append('static/images/new.png')
+
+    return render_template("admin/result.html",result=res,pg=round(maxie*100,2),lagent=lagent,pgg=pg,plots=plots)
+
 
 @app.route('/admin/agent')
 def agent():

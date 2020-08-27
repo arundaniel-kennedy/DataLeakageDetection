@@ -35,6 +35,15 @@
 
   {%endfor%}
   <br><br>
-  <img src="/plot/{{pg['zeee']}}" alt="">
+  Therefore we can conclude that the data was leaked by {{lagent}} with a guilty probability of {{pg}}%
+<br><br><br>
+
+  {% for plot in plots %}
+    <img src="/{{plot}}" alt="" height="300" width="500">
+  {% endfor %}
+<br><br>
+  {% for ppg in pgg %}
+  {{ ppg }} : {{ pgg[ppg] }} <br><br>
+  {% endfor %}
 </div>
 {% endblock %}
