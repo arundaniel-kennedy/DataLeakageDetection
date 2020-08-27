@@ -10,6 +10,7 @@ from search import *
 import bcrypt
 from faker import Faker
 import random as rand
+import matplotlib.pyplot as plt
 fake = Faker()
 
 config = {
@@ -47,14 +48,14 @@ def explicit(r,fak,b,B,n,choice):
             R.append(i)
         F.append([])
 
-    j = 0
     while B > 0:
         if choice == 'e-random':
             i = e_random(R)
         else:
             i = e_optimal(R,r)
-        f = fak[j]
-        j = j+1
+        f = rand.choice(fak[i])
+        for q in fak:
+            q.remove(f)
         r[i].append(f)
         F[i].append(f)
         b[i] = b[i]-1
@@ -62,6 +63,57 @@ def explicit(r,fak,b,B,n,choice):
             R.remove(i)
         B = B - 1
     return F
+
+def s_random(i,t,r,nt):
+    while True:
+        k = rand.randint(0,nt-1)
+        if t[k] not in r[i]:
+            return k
+
+def s_overlap(i,t,r,a):
+    k = [j for j, x in enumerate(a) if x == min(a)]
+    while True:
+        z = rand.choice(k)
+        if t[z] not in r[i]:
+            return z
+
+def s_max(i,t,r,a,n,m):
+    min_ov = 1
+    K = [t.index(p) for p in t if p not in r[i]]
+    for k in K:
+        max_rel_ov = 0
+        for j in range(0,n):
+            if j!=i and t[k] in r[j]:
+                abs_ov = len(list(set(r[i]) & set(r[j])))+1
+                rel_ov = abs_ov/min(m[i],m[j])
+                max_rel_ov = max(max_rel_ov,rel_ov)
+        if max_rel_ov <= min_ov:
+            min_ov = max_rel_ov
+            ret_k = k
+    return ret_k
+
+def sample(nt,t,a,n,m,choice):
+    r = []
+    for i in range(0,n):
+        r.append([])
+
+    rem = 0
+    for i in m:
+        rem = rem+i
+
+    while rem > 0:
+        for i in range(0,n):
+            if len(r[i]) < m[i]:
+                if choice == 's-random':
+                    k = s_random(i,t,r,nt)
+                elif choice == 's-overlap':
+                    k = s_overlap(i,t,r,a)
+                else:
+                    k = s_max(i,t,r,a,n,m)
+                r[i].append(t[k])
+                a[k] = a[k]+1
+                rem = rem-1
+    return r
 
 @app.route('/')
 def index():
@@ -72,19 +124,16 @@ def login():
     email = request.form['email']
     password = request.form['password']
 
-    mycursor.execute("SELECT * FROM login ")
+    mycursor.execute("SELECT * FROM login where email='"+email+"' and password='"+password+"'")
     myresult = mycursor.fetchone()
-    if(myresult!=''):
-        if(password == myresult[2]):
-            if(myresult[3]==1):
-                return render_template("admin/index.html")
-            else:
-                session['id'] = myresult[0]
-                return redirect(url_for("agents"))
+    if(len(myresult)>0):
+        if myresult[3]==1:
+            return redirect(url_for("adminindex"))
         else:
-            return render_template("/index.html")
+            session['id'] = myresult[0]
+            return redirect(url_for("agents"))
     else:
-        return render_template("/index.html")
+        return redirect(url_for("index"))
 
 @app.route('/admin')
 def adminindex():
@@ -115,6 +164,7 @@ def scrap():
     w = 0
     for ids in vt:
         ids = ids.split(",")
+        ids = list(filter(None,ids))
         agent =[]
         for id in ids:
             mycursor.execute("select name from agent where id='"+id+"'")
@@ -142,7 +192,16 @@ def scrap():
       for key in pr:
           val = 1-pr[key]
           pg[key].append(val)
-    return pg #render_template("admin/result.html",result=res)
+
+    plots = []
+    # for pl in pg:
+    #     p = [i/10 for i in range(0,11,1)]
+    #     plt.plot(pg[pl],p,label = "i=1")
+    #     plt.xlabel('Pr{Gi}')
+    #     plt.ylabel('p')
+    #     plt.savefig('/static/images/'+pl+'.jpg')
+    #     plot.append('/static/images/'+pl+'.jpg')
+    return render_template("admin/result.html",result=res,plots=plots)
 
 @app.route('/admin/agent')
 def agent():
@@ -175,62 +234,135 @@ def saveagent():
 @app.route('/admin/blockagent',methods=['POST'])
 def blockagent():
     id = request.form['id']
+    state = request.form['state']
 
-    mycursor.execute("update agent set status='Blocked' where id='"+id+"'")
-    link.commit()
+    if state == 'Unblocked':
+        mycursor.execute("update agent set status='Blocked' where id='"+id+"'")
+        link.commit()
+    else:
+        mycursor.execute("update agent set status='Unblocked' where id='"+id+"'")
+        link.commit()
+
 
     return redirect(url_for("agent"))
 
 @app.route('/admin/addaccess')
 def addaccess():
-    mycursor.execute("select * from agent")
+    mycursor.execute("select * from agent where status='Unblocked'")
     agents = mycursor.fetchall()
 
     return render_template("admin/addaccess.html",agents=agents)
 
+@app.route('/admin/delaccess')
+def delaccess():
+    mycursor.execute("update agent set total_records=0")
+    link.commit()
+
+    mycursor.execute("update data set agent=''")
+    link.commit()
+
+    mycursor.execute("update fake set agent=''")
+    link.commit()
+
+    return redirect(url_for("agent"))
+
+
 @app.route('/admin/defaccess',methods=['POST'])
 def defaccess():
     id = list(set(request.form['id'].split(',')))
-    n = len(list(filter(None, id)))
+    id = list(filter(None, id))
+    id.sort()
+    n = len(id)
     allocation = request.form['allocation']
     algorithm = request.form['algorithm']
 
-    B = int(request.form['tfo'])
-    bi = request.form['tfea'].split(",")
-    bi = list(filter(None, bi))
-    b = [int(b) for b in bi]
-    cond = request.form['condition'].split(",")
-    mi = request.form['toea'].split(",")
-    mi = list(filter(None, mi))
-    m = [int(m) for m in mi]
+    data = []
+    if allocation == 'explicit':
+        B = int(request.form['tfo'])
+        bi = request.form['tfea'].split(",")
+        bi = list(filter(None, bi))
+        b = [int(b) for b in bi]
+        cond = request.form['condition'].split(",")
 
-    r=[]
-    for i in range(0,n):
-        r.append([])
+        r=[]
+        zz=[]
+        for i in range(0,n):
+            r.append([])
+            zz.append([])
 
-    for i in range(0,n):
-        mycursor.execute("select id from data where type='"+cond[i]+"'")
-        rest = mycursor.fetchall()
-        for ress in rest:
-             r[i].append(ress[0])
+        for i in range(0,n):
+            mycursor.execute("select id from data where type='"+cond[i]+"'")
+            rest = mycursor.fetchall()
+            for ress in rest:
+                 r[i].append(ress[0])
+                 zz[i].append(ress[0])
 
-    fak=[]
-    for i in range(0,n):
-        fak.append([])
+        fak=[]
+        for i in range(0,n):
+            fak.append([])
 
-    for i in range(0,n):
-        mycursor.execute("select id from fake where type='"+cond[i]+"'")
-        rest = mycursor.fetchall()
-        for ress in rest:
-            print(i)
-            fak[i].append(ress[0])
+        for i in range(0,n):
+            mycursor.execute("select id from fake where type='"+cond[i]+"' and agent='' or agent is NULL")
+            rest = mycursor.fetchall()
+            for ress in rest:
+                fak[i].append(ress[0])
 
-    print(fak)
+        data = explicit(r, fak, b, B, n, algorithm)
 
-    # if(allocation == 'explicit'):
-    #     print(explicit(r, fak, b, B, n, algorithm))
+        for i in range(0,n):
+            p = len(data[i])+len(zz[i])
+            mycursor.execute("update agent set total_records='"+str(p)+"' where id='"+id[i]+"'")
+            link.commit()
+            for j in zz[i]:
+                mycursor.execute("select agent from data where id='"+str(j)+"'")
+                age = mycursor.fetchone()
+                if(age[0]!=None):
+                    age = age[0]+id[i]+","
+                else:
+                    age = id[i]+","
+                mycursor.execute("update data set `agent`='"+age+"' where id='"+str(j)+"'")
+                link.commit()
+            for j in data[i]:
+                mycursor.execute("update fake set `agent`='"+str(id[i])+"' where id='"+str(j)+"'")
+                link.commit()
+    else:
+        mi = request.form['toea'].split(",")
+        mi = list(filter(None, mi))
+        m = [int(m) for m in mi]
 
-    #return redirect(url_for(agent))
+        limit = request.form['limit']
+
+        t = []
+
+        for i in range(0,n):
+            mycursor.execute("select id from data where agent='' or agent is NULL limit "+limit)
+            rest = mycursor.fetchall()
+            for ress in rest:
+                 t.append(ress[0])
+
+        nt = len(t)
+
+        a = []
+        for i in range(0,nt):
+            a.append(0)
+
+        data = sample(nt,t,a,n,m,algorithm)
+
+        for i in range(0,n):
+            p = len(data[i])
+            mycursor.execute("update agent set total_records='"+str(p)+"' where id='"+id[i]+"'")
+            link.commit()
+            for j in data[i]:
+                mycursor.execute("select agent from data where id='"+str(j)+"'")
+                age = mycursor.fetchone()
+                if(age[0]!=None):
+                    age = age[0]+id[i]+","
+                else:
+                    age = id[i]+","
+                mycursor.execute("update data set `agent`='"+age+"' where id='"+str(j)+"'")
+                link.commit()
+
+    return redirect(url_for("agent"))
 
 @app.route('/admin/fakedata')
 def fakedata():
@@ -288,21 +420,19 @@ def savedata():
 @app.route('/agent')
 def agents():
     id = session['id']
-    #print(id)
+    print(id)
 
-    mycursor.execute("select * from data")
+    mycursor.execute("select * from data where agent is not NULL and agent!=''")
     myresult = mycursor.fetchall()
 
-    data = []
-    for x in myresult:
-        if(x[2]=="null" or x[2]==None):
-            fff = ''
-        else:
-            sd = x[2].split(",")
-            #print(sd)
-            if str(id) in sd:
-                data.append(x)
-    return render_template("agent/index.html",res = data)
+    final = []
+    for result in myresult:
+        da = result[3].split(",")
+        da = list(filter(None,da))
+        if str(id) in da:
+            final.append(result)
+
+    return render_template("agent/index.html",res = final)
 
 if __name__ == "__main__":
     app.run(host='192.168.1.4', port=40974,debug=True)

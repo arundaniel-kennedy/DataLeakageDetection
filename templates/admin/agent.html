@@ -30,6 +30,7 @@
 <h2 class="text-center">Agents</h2><hr>
 <div class="d-flex justify-content-between">
   <a href="/admin/addagent" class="btn btn-success">Add new Agent</a>
+  <a href="/admin/delaccess" class="btn btn-danger text-nowrap">Delete Access</a>
   <a href="/admin/addaccess" class="btn btn-warning text-nowrap">Add Access</a>
 </div>
 <hr><br>
@@ -49,6 +50,7 @@
       <td>
         <form action="/admin/blockagent" method="post">
           <input type="text" name="id" value="{{ x[0] }}" hidden>
+          <input type="hidden" name="state" value="{{ x[3] }}">
           <button type="submit" name="button" class="btn btn-danger">{{ x[3] }}</button>
         </form>
       </td>
