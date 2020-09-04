@@ -7,7 +7,7 @@
   <hr>
   <form class="" action="/admin/defaccess" method="post">
     <input type="hidden" name="id" value="">
-    <h4>Choose the agents to distribute data to</h4>
+    <h4 style="font-family: 'Chelsea Market';">Choose the agents to distribute data to</h4>
     {% for x in agents %}
       <div class="form-check">
         <input class="form-check-input" type="checkbox" value="{{x[0]}}" id="checkbox{{x[0]}}" onchange="addid({{x[0]}})">
@@ -15,32 +15,32 @@
       </div>
     {% endfor %}
     <hr>
-    <h4>Choose the type of data distribution</h4>
+    <h4 style="font-family: 'Chelsea Market';">Choose the type of data distribution</h4>
       <div class="form-check">
         <input class="form-check-input" type="radio" name="allocation" id="exampleRadios1" value="explicit" onchange="algoshow()">
-        <label class="form-check-label" for="exampleRadios1">
+        <label class="form-check-label" for="exampleRadios1" style="font-family: 'Chelsea Market';">
           Explicit
         </label>
       </div>
       <div class="form-check">
         <input class="form-check-input" type="radio" name="allocation" id="exampleRadios2" value="sample" onchange="algoshow()">
-        <label class="form-check-label" for="exampleRadios2">
+        <label class="form-check-label" for="exampleRadios2" style="font-family: 'Chelsea Market';">
           Sample
         </label>
       </div>
       <br>
     <div class="d-none" id="algos">
-      <h5>Choose algorithm</h5>
+      <h5 style="font-family: 'Chelsea Market';">Choose algorithm</h5>
         <div id="edr" class="d-none">
           <div class="form-check">
             <input class="form-check-input" type="radio" name="algorithm" id="exampleRadios3" value="e-random">
-            <label class="form-check-label" for="exampleRadios3">
+            <label class="form-check-label" for="exampleRadios3" style="font-family: 'Chelsea Market';">
               E-Random
             </label>
           </div>
           <div class="form-check">
             <input class="form-check-input" type="radio" name="algorithm" id="exampleRadios4" value="e-optimal">
-            <label class="form-check-label" for="exampleRadios4">
+            <label class="form-check-label" for="exampleRadios4" style="font-family: 'Chelsea Market';">
               E-optimal
             </label>
           </div>
@@ -48,19 +48,19 @@
         <div id="sdr" class="d-none">
           <div class="form-check">
             <input class="form-check-input" type="radio" name="algorithm" id="exampleRadios5" value="s-random">
-            <label class="form-check-label" for="exampleRadios5">
+            <label class="form-check-label" for="exampleRadios5" style="font-family: 'Chelsea Market';">
               S-Random
             </label>
           </div>
           <div class="form-check">
             <input class="form-check-input" type="radio" name="algorithm" id="exampleRadios6" value="s-overlap">
-            <label class="form-check-label" for="exampleRadios6">
+            <label class="form-check-label" for="exampleRadios6" style="font-family: 'Chelsea Market';">
               S-Overlap
             </label>
           </div>
           <div class="form-check">
             <input class="form-check-input" type="radio" name="algorithm" id="exampleRadios7" value="s-max">
-            <label class="form-check-label" for="exampleRadios7">
+            <label class="form-check-label" for="exampleRadios7" style="font-family: 'Chelsea Market';">
               S-Max
             </label>
           </div>
