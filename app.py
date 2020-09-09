@@ -154,6 +154,7 @@ def scrap():
     data = mycursor.fetchall()
     #print(set(data)
     reti = html(urls,data) # getting data that was found
+    # print(reti)
 
     vt = [] #agent id (vt)
     for j in reti:
@@ -454,4 +455,4 @@ def agents():
     return render_template("agent/index.html",res = final)
 
 if __name__ == "__main__":
-    app.run(host='192.168.1.4', port=40974,debug=True)
+    app.run(debug=True)
