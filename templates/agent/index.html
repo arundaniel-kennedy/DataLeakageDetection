@@ -18,9 +18,10 @@
     </div>
   </nav>
 
-<textarea name="name" rows="8" class="form-control">
-{% for x in res%}{{x[1]}} <br/>
-{% endfor %}
-</textarea>
+    <textarea name="name" rows="15" class="form-control mt-5" style="background-color:white;border:1px solid black">
+    {% for x in res%}{{x[1]}} <br/>
+    {% endfor %}
+    </textarea>
+
 </div>
 {% endblock %}
