@@ -210,7 +210,7 @@ def scrap():
     i = 0
     for pl in pg:
         print(i,pg[pl])
-        plt.plot(pg[pl],p,label = "i="+str(i))
+        plt.plot(pg[pl],p,label = "i="+str(i),'r--')
         i = i+1
 
     plt.title("Guilty chart", fontdict=None, loc='center', pad=None)
