@@ -150,8 +150,12 @@ def scrap():
     urls = request.form['sites']
     urls = urls.strip().split()
 
-    mycursor.execute("select value from data")
+    mycursor.execute("select value from data where agent is not NULL or agent!=''")
     data = mycursor.fetchall()
+
+    # mycursor.execute("select value from fake where agent is not NULL or agent!=''")
+    # data = data + mycursor.fetchall()
+    #print(data)
     #print(set(data)
     reti = html(urls,data) # getting data that was found
     # print(reti)
@@ -209,8 +213,8 @@ def scrap():
     p = [i/10 for i in range(0,11,1)]
     i = 0
     for pl in pg:
-        print(i,pg[pl])
-        plt.plot(pg[pl],p,label = "i="+str(i),'r--')
+        #print(i,pg[pl])
+        plt.plot(pg[pl],p,label = "i="+str(i))
         i = i+1
 
     plt.title("Guilty chart", fontdict=None, loc='center', pad=None)
@@ -455,4 +459,4 @@ def agents():
     return render_template("agent/index.html",res = final)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='192.168.1.4',port='40974',debug=True)
